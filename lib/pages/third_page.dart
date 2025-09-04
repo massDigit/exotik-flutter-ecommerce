@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ecommerce/guard.dart';
 import 'package:flutter_ecommerce/widgets/drawer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ThirdPage extends StatelessWidget {
   const ThirdPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      return const Guard();
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Third Page'),

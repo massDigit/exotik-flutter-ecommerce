@@ -1,11 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce/widgets/drawer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_ecommerce/guard.dart';
 
 class SecondPage extends StatelessWidget {
   const SecondPage({super.key});
 
+
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
+    // Si l'utilisateur n'est pas connecté, rediriger vers la page de connexion
+    if (user == null) {
+      return const Guard();
+    }
+
+    // Si l'utilisateur est connecté, afficher la page
     return Scaffold(
       appBar: AppBar(
         title: Text('Second Page'),
@@ -44,7 +55,7 @@ class SecondPage extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 // Action pour retourner à la page précédente
-                Navigator.pop(context);
+                Navigator.pushReplacementNamed(context, '/');
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,

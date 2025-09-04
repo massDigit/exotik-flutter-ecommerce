@@ -11,25 +11,25 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  // 🔥 AJOUT : Controllers pour les 3 champs (email, password, confirm)
+  //  AJOUT : Controllers pour les 3 champs (email, password, confirm)
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
-  // 🔥 AJOUT : Variables d'état
+  //  AJOUT : Variables d'état
   bool _isLoading = false;
   String _errorMessage = '';
 
   @override
   void dispose() {
-    // 🔥 AJOUT : Nettoyage des 3 controllers
+    //  AJOUT : Nettoyage des 3 controllers
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  // 🔥 AJOUT : Fonction principale d'inscription
+  //  AJOUT : Fonction principale d'inscription
   Future<void> _register() async {
     // Validation des champs vides
     if (_emailController.text.trim().isEmpty ||
@@ -41,7 +41,7 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    // 🔥 AJOUT : Validation que les mots de passe correspondent
+    //  AJOUT : Validation que les mots de passe correspondent
     if (_passwordController.text != _confirmPasswordController.text) {
       setState(() {
         _errorMessage = 'Les mots de passe ne correspondent pas.';
@@ -49,7 +49,7 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    // 🔥 AJOUT : Validation de la longueur du mot de passe
+    //  AJOUT : Validation de la longueur du mot de passe
     if (_passwordController.text.length < 6) {
       setState(() {
         _errorMessage = 'Le mot de passe doit contenir au moins 6 caractères.';
@@ -77,7 +77,7 @@ class _RegisterPageState extends State<RegisterPage> {
             backgroundColor: Colors.green,
           ),
         );
-        // 🔥 BONUS : L'utilisateur est automatiquement connecté après inscription
+        //  BONUS : L'utilisateur est automatiquement connecté après inscription
         Navigator.pushReplacementNamed(context, '/');
       }
     } on FirebaseAuthException catch (e) {
@@ -117,7 +117,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Inscription'),
-        backgroundColor: Colors.green[600], // Couleur différente du login
+        backgroundColor: Colors.blue[600], // Couleur différente du login
         foregroundColor: Colors.white,
       ),
       drawer: const AppDrawer(),
@@ -130,7 +130,7 @@ class _RegisterPageState extends State<RegisterPage> {
             Icon(
               Icons.person_add,
               size: 100,
-              color: Colors.green[600],
+              color: Colors.blue[600],
             ),
             const SizedBox(height: 30),
 
@@ -201,7 +201,7 @@ class _RegisterPageState extends State<RegisterPage> {
               child: ElevatedButton(
                 onPressed: _isLoading ? null : _register,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green[600],
+                  backgroundColor: Colors.blue[600],
                   foregroundColor: Colors.white,
                 ),
                 child: _isLoading

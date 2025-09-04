@@ -81,16 +81,16 @@ class AppDrawer extends StatelessWidget {
 
           const Divider(),
 
-          // 🔥 AJOUT : Section Authentification intelligente
+          // AJOUT : Section Authentification intelligente
           if (user == null) ...[
             // Si pas connecté, affiche les options de connexion
             ListTile(
-              leading: const Icon(Icons.login, color: Colors.green),
+              leading: const Icon(Icons.login, color: Colors.grey),
               title: const Text('Se connecter'),
               onTap: () => _go(context, '/login'),
             ),
             ListTile(
-              leading: const Icon(Icons.person_add, color: Colors.blue),
+              leading: const Icon(Icons.person_add, color: Colors.blueAccent),
               title: const Text('S\'inscrire'),
               onTap: () => _go(context, '/register'),
             ),
