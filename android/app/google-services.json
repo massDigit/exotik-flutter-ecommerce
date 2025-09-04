@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "302423523968",
+    "project_id": "mds-m2-flutter-exotik-ecom",
+    "storage_bucket": "mds-m2-flutter-exotik-ecom.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:302423523968:android:7ab0be06dc7a9baee15c65",
+        "android_client_info": {
+          "package_name": "com.example.flutter_ecommerce"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLJI8LJdzBxcYjVfoblOnYT19oixq1uz4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
