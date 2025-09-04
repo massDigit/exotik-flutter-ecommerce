@@ -3,11 +3,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_ecommerce/pages/home_page.dart';
 import 'package:flutter_ecommerce/pages/login_page.dart';
 import 'package:flutter_ecommerce/pages/register_page.dart';
-import 'package:flutter_ecommerce/pages/second_page.dart';
+import 'package:flutter_ecommerce/pages/product_detail_page.dart';
 import 'package:flutter_ecommerce/pages/third_page.dart';
 import 'firebase_options.dart';
 
-void main()async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Drawer Demo',
+      title: 'Flutter E-Commerce App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorSchemeSeed: Colors.blue,
@@ -31,11 +31,15 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (_) => const MyHomePage(),
-        '/second': (_) => const SecondPage(),
         '/third': (_) => const ThirdPage(),
-        // 🔥 AJOUT : Nouvelles routes pour l'authentification
         '/login': (_) => const LoginPage(),
         '/register': (_) => const RegisterPage(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == '/product-detail') {
+          return null;
+        }
+        return null;
       },
     );
   }

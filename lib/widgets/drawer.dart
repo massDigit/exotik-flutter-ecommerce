@@ -25,14 +25,14 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 🔥 AJOUT : Récupère l'utilisateur actuellement connecté (null si pas connecté)
+    // AJOUT : Récupère l'utilisateur actuellement connecté (null si pas connecté)
     final user = FirebaseAuth.instance.currentUser;
 
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          // 🔥 MODIFICATION : DrawerHeader intelligent qui affiche les infos utilisateur
+          // MODIFICATION : DrawerHeader intelligent qui affiche les infos utilisateur
           DrawerHeader(
             decoration: const BoxDecoration(color: Colors.blue),
             child: Column(
@@ -67,11 +67,6 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.home),
             title: const Text('Accueil'),
             onTap: () => _go(context, '/'),
-          ),
-          ListTile(
-            leading: const Icon(Icons.pages),
-            title: const Text('Second Page'),
-            onTap: () => _go(context, '/second'),
           ),
           ListTile(
             leading: const Icon(Icons.settings),
