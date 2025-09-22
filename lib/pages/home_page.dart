@@ -1,9 +1,12 @@
 // lib/pages/home_page.dart
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_ecommerce/controllers/product_controller.dart';
 import 'package:flutter_ecommerce/controllers/pagination_controller.dart';
 import 'package:flutter_ecommerce/controllers/filter_controller.dart';
+import 'package:flutter_ecommerce/controllers/cart_controller.dart';
 import 'package:flutter_ecommerce/pages/product_detail_page.dart';
+import 'package:flutter_ecommerce/pages/cart_page.dart';
 import 'package:flutter_ecommerce/widgets/drawer.dart';
 import 'package:flutter_ecommerce/widgets/custom_search_bar.dart';
 import 'package:flutter_ecommerce/model/product_model.dart';
@@ -16,10 +19,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   late final ProductController _productController;
   late final PaginationController _paginationController;
   late final FilterController _filterController;
+  late final CartController _cartController; // Ajout du CartController
 
   final List<String> myAppSuggestions = [
     'iPhone 15 Pro',
@@ -39,6 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _initializeControllers();
     _loadInitialData();
+    _initializeCart();
   }
 
   @override
@@ -46,6 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _productController.dispose();
     _paginationController.dispose();
     _filterController.dispose();
+    _cartController.dispose(); // Dispose du CartController
     super.dispose();
   }
 
@@ -53,6 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _productController = ProductController();
     _paginationController = PaginationController();
     _filterController = FilterController();
+    _cartController = CartController(); // Initialisation du CartController
 
     _productController.onStateChanged = () {
       if (mounted) {
@@ -79,11 +85,30 @@ class _MyHomePageState extends State<MyHomePage> {
         });
       }
     };
+
+    // Écouter les changements du panier
+    _cartController.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   void _loadInitialData() {
     _productController.loadAllProducts();
     _productController.loadCategories();
+  }
+
+  void _initializeCart() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // Créer un panier si l'utilisateur n'en a pas
+        if (!_cartController.hasCart) {
+          _cartController.createCart(user.uid);
+        }
+      });
+    }
   }
 
   void _onSearchSelected(String searchTerm) {
@@ -131,6 +156,61 @@ class _MyHomePageState extends State<MyHomePage> {
     _loadInitialData();
   }
 
+  void _navigateToCart() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CartPage(cartController: _cartController), // Passer le controller
+      ),
+    );
+  }
+
+  // Nouvelle méthode pour ajouter un produit au panier
+  void _addToCart(ProductModel product) {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Vous devez être connecté pour ajouter au panier'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    _cartController.addOrIncrementProduct(product.id).then((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.white),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text('${product.title} ajouté au panier'),
+              ),
+              TextButton(
+                onPressed: _navigateToCart,
+                child: Text(
+                  'VOIR PANIER',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }).catchError((error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erreur: $error'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,6 +219,41 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         actions: [
+          // Icône du panier avec badge
+          Stack(
+            children: [
+              IconButton(
+                icon: Icon(Icons.shopping_cart),
+                onPressed: _navigateToCart,
+                tooltip: 'Mon Panier',
+              ),
+              if (_cartController.totalItems > 0)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    constraints: BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      '${_cartController.totalItems}',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
+          ),
           IconButton(
             icon: Icon(Icons.refresh),
             onPressed: _onRefresh,
@@ -524,10 +639,37 @@ class _MyHomePageState extends State<MyHomePage> {
                             fontSize: 14,
                           ),
                         ),
-                        Icon(
-                          Icons.add_shopping_cart,
-                          color: Colors.blue,
-                          size: 18,
+                        // Bouton d'ajout au panier modifié
+                        GestureDetector(
+                          onTap: () => _addToCart(product),
+                          child: Container(
+                            padding: EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: _cartController.isProductInCart(product.id) ? Colors.green : Colors.blue,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  _cartController.isProductInCart(product.id) ? Icons.check : Icons.add_shopping_cart,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                                if (_cartController.isProductInCart(product.id) && _cartController.getProductQuantity(product.id) > 0) ...[
+                                  SizedBox(width: 4),
+                                  Text(
+                                    '${_cartController.getProductQuantity(product.id)}',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
                         ),
                       ],
                     ),

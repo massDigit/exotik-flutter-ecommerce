@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:flutter_ecommerce/model/product_model.dart';
 
+
 class ProductService {
-  static const String baseUrl = 'http://localhost:8000';
+  static const String baseUrl = 'https://api-ecom-flutter.jboureux.fr';
 
   void test() {
     print("ProductService");
@@ -25,6 +27,8 @@ class ProductService {
         'limit': limit.toString(),
         'offset': offset.toString(),
       };
+
+
 
       if (category != null && category.isNotEmpty) {
         queryParams['category'] = category;
@@ -80,27 +84,21 @@ class ProductService {
   // Récupérer toutes les catégories (pour les filtres)
   Future<List<String>> getCategories() async {
     try {
+      log('🔍 Début de getCategories()');
       final response = await http.get(
-        Uri.parse('$baseUrl/products?limit=1000'), // Récupérer beaucoup pour avoir toutes les catégories
+        Uri.parse('$baseUrl/categories'), // Récupérer beaucoup pour avoir toutes les catégories
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
       );
-
+      log('Status code: ${response.statusCode}');
+      log('Response body: ${response.body}');
       if (response.statusCode == 200) {
-        final Map<String, dynamic> jsonData = json.decode(response.body);
-        final products = (jsonData['products'] as List)
-            .map((product) => ProductModel.fromJson(product))
-            .toList();
+        final List<dynamic> jsonData = json.decode(response.body);
 
-        // Extraire les catégories uniques
-        final categories = products
-            .map((product) => product.category)
-            .toSet()
-            .toList();
+       return jsonData.cast<String>();
 
-        return categories;
       } else {
         throw Exception('Erreur lors du chargement des catégories: ${response.statusCode}');
       }

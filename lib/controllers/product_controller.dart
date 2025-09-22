@@ -29,7 +29,7 @@ class ProductController {
       _errorMessage = null;
       _notifyStateChanged();
 
-      final response = await _repository.getProducts(page: 1, limit: 1000);
+      final response = await _repository.getProducts(page: 1, limit: 100);
 
       _allProducts = response.products;
       _filteredProducts = response.products;
@@ -89,7 +89,7 @@ class ProductController {
     applyFilters(selectedCategory: category);
   }
 
-  // Récupérer un produit par ID
+  // Récupérer un produit par ID non utilisé pour le moment
   Future<ProductModel?> getProductById(int id) async {
     try {
       return await _repository.getProductById(id);
