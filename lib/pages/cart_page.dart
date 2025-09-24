@@ -296,6 +296,22 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
+  Widget _buildImagePlaceholder() {
+    return Container(
+      width: 60,
+      height: 60,
+      decoration: BoxDecoration(
+        color: Colors.grey[300],
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Icon(
+        Icons.image_not_supported,
+        color: Colors.grey[600],
+        size: 30,
+      ),
+    );
+  }
+
   Widget _buildCartItem(CartProductModel product, CartController cartController) {
     final subtotal = product.priceAtTime * product.quantity;
 
@@ -306,20 +322,35 @@ class _CartPageState extends State<CartPage> {
         padding: EdgeInsets.all(16),
         child: Row(
           children: [
-            // Image placeholder
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(
-                Icons.image,
-                color: Colors.grey[600],
-                size: 30,
-              ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: (product.imageUrls != null && product.imageUrls!.isNotEmpty)
+                  ? Image.network(
+                product.thumbnail,
+                width: 60,
+                height: 60,
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return _buildImagePlaceholder();
+                },
+                errorBuilder: (context, error, stackTrace) => _buildImagePlaceholder(),
+              )
+                  : _buildImagePlaceholder(),
             ),
+            // Container(
+            //   width: 60,
+            //   height: 60,
+            //   decoration: BoxDecoration(
+            //     color: Colors.grey[300],
+            //     borderRadius: BorderRadius.circular(8),
+            //   ),
+            //   child: Icon(
+            //     Icons.image,
+            //     color: Colors.grey[600],
+            //     size: 30,
+            //   ),
+            // ),
             SizedBox(width: 16),
 
             // Informations du produit
@@ -328,7 +359,7 @@ class _CartPageState extends State<CartPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Produit #${product.productId}',
+                    '${product.title}',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,

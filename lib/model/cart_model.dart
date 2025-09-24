@@ -1,3 +1,4 @@
+
 class CartModel {
   final int? id;
   final String userId;
@@ -71,12 +72,18 @@ class CartProductModel {
   final int cartId;
   final int productId;
   final int quantity;
+  final String title;
+  final List<String>? imageUrls;
+  final String thumbnail ;
   final double priceAtTime;
 
   CartProductModel({
     required this.cartId,
     required this.productId,
     required this.quantity,
+    required this.title,
+    this.imageUrls,
+    required this.thumbnail,
     required this.priceAtTime,
   });
 
@@ -85,6 +92,11 @@ class CartProductModel {
       cartId: json['cart_id'],
       productId: json['product_id'],
       quantity: json['quantity'],
+      title: json['product_name'],
+      imageUrls: json['product_images'] != null
+          ? List<String>.from(json['product_images'])
+          : null,
+      thumbnail : json['product_thumbnail'],
       priceAtTime: (json['price_at_time']).toDouble(),
     );
   }
@@ -94,6 +106,9 @@ class CartProductModel {
       'cart_id': cartId,
       'product_id': productId,
       'quantity': quantity,
+      'product_name': title,
+      'product_images': imageUrls,
+      'product_thumbnail':thumbnail,
       'price_at_time': priceAtTime,
     };
   }
@@ -102,12 +117,19 @@ class CartProductModel {
     int? cartId,
     int? productId,
     int? quantity,
+    List<String>? imageUrls,
+    String ? thumbnail,
+    String? title,
+
     double? priceAtTime,
   }) {
     return CartProductModel(
       cartId: cartId ?? this.cartId,
       productId: productId ?? this.productId,
       quantity: quantity ?? this.quantity,
+      title: title ?? this.title,
+      imageUrls: imageUrls ?? this.imageUrls,
+      thumbnail: thumbnail ?? this.thumbnail,
       priceAtTime: priceAtTime ?? this.priceAtTime,
     );
   }
@@ -124,6 +146,9 @@ class CartProductModel {
         other.cartId == cartId &&
         other.productId == productId &&
         other.quantity == quantity &&
+        other.title == title &&
+        other.imageUrls == imageUrls &&
+        other.thumbnail == thumbnail &&
         other.priceAtTime == priceAtTime;
   }
 
@@ -132,6 +157,9 @@ class CartProductModel {
     return cartId.hashCode ^
     productId.hashCode ^
     quantity.hashCode ^
+    title.hashCode ^
+    imageUrls.hashCode ^
+    thumbnail.hashCode ^
     priceAtTime.hashCode;
   }
 }
