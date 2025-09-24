@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_ecommerce/pages/web_product_detail_page.dart';
 
 import 'firebase_options.dart';
 
@@ -45,36 +46,24 @@ class AppRoot extends StatelessWidget {
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/product-detail') {
-          final args = settings.arguments;
-
-          // On attend un ProductModel (directement ou dans une map)
-          if (args is ProductModel) {
+          final arg = settings.arguments;
+          if (arg is ProductModel) {
             return MaterialPageRoute(
-              builder: (_) => ProductDetailPage(product: args),
+              builder: (_) => kIsWeb
+                  ? WebProductDetailPage(product: arg)
+                  : ProductDetailPage(product: arg),
               settings: settings,
             );
           }
-          if (args is Map && args['product'] is ProductModel) {
-            return MaterialPageRoute(
-              builder: (_) => ProductDetailPage(product: args['product'] as ProductModel),
-              settings: settings,
-            );
-          }
-
-          // Erreur d'arguments
+          // Fallback si l'argument n'est pas bon
           return MaterialPageRoute(
-            builder: (_) => const _RouteErrorPage(
-              message: 'Argument invalide pour /product-detail : ProductModel requis.',
+            builder: (_) => const Scaffold(
+              body: Center(child: Text('Produit invalide')),
             ),
             settings: settings,
           );
         }
-
-        // Fallback routes inconnues
-        return MaterialPageRoute(
-          builder: (_) => _RouteErrorPage(message: 'Route inconnue : ${settings.name}'),
-          settings: settings,
-        );
+        return null; // ou ta route inconnue
       },
     );
   }
