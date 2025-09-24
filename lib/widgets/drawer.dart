@@ -38,15 +38,16 @@ class AppDrawer extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Mon App',
-                  style: TextStyle(color: Colors.white, fontSize: 24),
+                Image.asset(
+                  'lib/assets/images/logo/playstore.png',
+                  height: 40,
+                  fit: BoxFit.contain,
                 ),
                 const SizedBox(height: 10),
                 // 🔥 AJOUT : Affichage conditionnel selon l'état de connexion
                 if (user != null) ...[
                   // Si l'utilisateur est connecté
-                  const Icon(Icons.account_circle, color: Colors.white, size: 40),
+                  // const Icon(Icons.account_circle, color: Colors.white, size: 40),
                   const SizedBox(height: 5),
                   Text(
                     user.email ?? 'Utilisateur connecté',
