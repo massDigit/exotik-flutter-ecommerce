@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ecommerce/controllers/cart_controller.dart';
+import 'package:flutter_ecommerce/pages/cart_page.dart';
 import 'package:flutter_ecommerce/widgets/drawer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_ecommerce/guard.dart';
 import 'package:flutter_ecommerce/model/product_model.dart';
 
 class ProductDetailPage extends StatefulWidget {
@@ -16,7 +17,101 @@ class ProductDetailPage extends StatefulWidget {
 class _ProductDetailPageState extends State<ProductDetailPage> {
   int selectedImageIndex = 0;
   int quantity = 1;
+  late final CartController _cartController; // Ajout du CartController
 
+  @override
+  void initState() {
+    super.initState();
+    _initializeControllers();
+    _initializeCart();
+  }
+
+  @override
+  void dispose() {
+    _cartController.dispose(); // Dispose du CartController
+    super.dispose();
+  }
+
+  void _initializeControllers() {
+    _cartController = CartController(); // Initialisation du CartController
+    // Écouter les changements du panier
+    _cartController.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+  void _initializeCart() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+
+        _cartController.createCart(user.uid);
+        // if (!widget.cartController.hasCart) {
+        //   widget.cartController.createCart(user.uid);
+        // } else {
+        //   widget.cartController.refreshCart();
+        // }
+
+        //test reffacto
+      });
+    }
+  }
+
+  void _navigateToCart() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CartPage(cartController: _cartController), // Passer le controller
+      ),
+    );
+  }
+
+
+  void _addToCart(ProductModel product) {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Vous devez être connecté pour ajouter au panier'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    _cartController.addOrIncrementProduct(product.id, quantity: quantity).then((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.white),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text('${product.title} ajouté au panier'),
+              ),
+              TextButton(
+                onPressed: _navigateToCart,
+                child: Text(
+                  'VOIR PANIER',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }).catchError((error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erreur: $error'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
@@ -303,15 +398,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             Expanded(
               flex: 2,
               child: ElevatedButton(
-                onPressed: () {
-                  // Ajouter au panier
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('${widget.product.title} ajouté au panier (x$quantity)'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                },
+                onPressed: () => _addToCart(widget.product),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   foregroundColor: Colors.white,
