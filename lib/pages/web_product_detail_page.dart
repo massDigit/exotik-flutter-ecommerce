@@ -116,7 +116,6 @@ class _WebProductDetailPageState extends State<WebProductDetailPage> {
         ],
       ),
 
-      // même ordre que mobile, centré pour le desktop
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1200),
@@ -124,9 +123,8 @@ class _WebProductDetailPageState extends State<WebProductDetailPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 16), // NEW: espace sous l’AppBar
+                const SizedBox(height: 16),
 
-                // Galerie (PageView) en haut
                 SizedBox(
                   height: 420,
                   child: Stack(
@@ -155,7 +153,6 @@ class _WebProductDetailPageState extends State<WebProductDetailPage> {
                         },
                       ),
 
-                      // Indicateurs
                       Positioned(
                         bottom: 16,
                         left: 0,
@@ -181,13 +178,11 @@ class _WebProductDetailPageState extends State<WebProductDetailPage> {
                   ),
                 ),
 
-                // Infos + description + quantité + total
                 Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // catégorie
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
@@ -235,8 +230,6 @@ class _WebProductDetailPageState extends State<WebProductDetailPage> {
                       ),
 
                       const SizedBox(height: 24),
-
-                      // quantité
                       Row(
                         children: [
                           const Text(

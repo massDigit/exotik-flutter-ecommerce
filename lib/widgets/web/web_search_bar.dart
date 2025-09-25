@@ -5,7 +5,7 @@ class WebSearchBar extends StatefulWidget {
   final List<String> suggestions;
   final ValueChanged<String> onSearchSelected;
   final VoidCallback? onFilterPressed;
-  final double height; // ex: 44 dans l’AppBar
+  final double height;
 
   const WebSearchBar({
     super.key,
@@ -72,7 +72,7 @@ class _WebSearchBarState extends State<WebSearchBar> {
           .take(8)
           .toList();
     }
-    setState(() {}); // met à jour l’UI (ex: icône clear si tu l’ajoutes un jour)
+    setState(() {});
   }
 
   void _ensureOverlay() {
@@ -208,14 +208,12 @@ class _WebSearchBarState extends State<WebSearchBar> {
               borderRadius: BorderRadius.circular(10),
             ),
 
-            // Icône gauche
             prefixIcon: const Icon(Icons.search, size: 20),
             prefixIconConstraints: BoxConstraints(
               minWidth: h,
               minHeight: h,
             ),
 
-            // Icône droite (filtre) — optionnelle
             suffixIcon: widget.onFilterPressed == null
                 ? null
                 : IconButton(
