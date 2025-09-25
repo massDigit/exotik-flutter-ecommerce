@@ -45,7 +45,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                 message: 'Filtres',
                 child: IconButton(
                   onPressed: widget.onFilterPressed ?? () {
-                    print('Ouvrir les filtres');
+                    debugPrint('Ouvrir les filtres');
                   },
                   icon: const Icon(Icons.tune),
                 ),

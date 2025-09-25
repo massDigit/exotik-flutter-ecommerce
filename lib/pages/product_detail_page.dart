@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce/controllers/cart_controller.dart';
+import 'package:flutter_ecommerce/guard.dart';
 import 'package:flutter_ecommerce/pages/cart_page.dart';
 import 'package:flutter_ecommerce/widgets/drawer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -68,11 +69,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
 
-  void _addToCart(ProductModel product) {
+  Future<void> _addToCart(ProductModel product) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Vous devez être connecté pour ajouter au panier'),
           backgroundColor: Colors.red,
         ),
@@ -80,46 +82,46 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       return;
     }
 
-    _cartController.addOrIncrementProduct(product.id, quantity: quantity).then((_) {
+    try {
+      await _cartController.addOrIncrementProduct(product.id, quantity: quantity);
+
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
             children: [
-              Icon(Icons.check_circle, color: Colors.white),
-              SizedBox(width: 8),
-              Expanded(
-                child: Text('${product.title} ajouté au panier'),
-              ),
+              const Icon(Icons.check_circle, color: Colors.white),
+              const SizedBox(width: 8),
+              Expanded(child: Text('${product.title} ajouté au panier')),
               TextButton(
                 onPressed: _navigateToCart,
-                child: Text(
-                  'VOIR PANIER',
-                  style: TextStyle(color: Colors.white),
-                ),
+                child: const Text('VOIR PANIER', style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
           backgroundColor: Colors.green,
-          duration: Duration(seconds: 3),
+          duration: const Duration(seconds: 3),
         ),
       );
-    }).catchError((error) {
+    } catch (error) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Erreur: $error'),
           backgroundColor: Colors.red,
         ),
       );
-    });
+    }
   }
+
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
 
     // Si l'utilisateur n'est pas connecté, rediriger vers la page de connexion
-    // if (user == null) {
-    //   return const Guard();
-    // }
+    if (user == null) {
+      return const Guard();
+    }
 
     // Si l'utilisateur est connecté, afficher la page de détail
     return Scaffold(
@@ -140,7 +142,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           IconButton(
             icon: Icon(Icons.share),
             onPressed: () {
-              // Partager le produit
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('Fonctionnalité de partage à implémenter')),
               );
@@ -157,7 +158,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Section des images
-                  Container(
+                  SizedBox(
                     height: 300,
                     child: Stack(
                       children: [
@@ -207,7 +208,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                   shape: BoxShape.circle,
                                   color: selectedImageIndex == entry.key
                                       ? Colors.blue
-                                      : Colors.white.withOpacity(0.5),
+                                      : Colors.white.withValues(alpha:0.5),
                                 ),
                               );
                             }).toList(),
@@ -226,7 +227,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
-                            color: Colors.blue.withOpacity(0.1),
+                            color: Colors.blue.withValues(alpha:0.1),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
@@ -385,7 +386,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.3),
+              color: Colors.grey.withValues(alpha:0.3),
               spreadRadius: 1,
               blurRadius: 5,
               offset: Offset(0, -2),

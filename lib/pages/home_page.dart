@@ -120,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Filtrer par catégorie'),
-        content: Container(
+        content: SizedBox(
           width: double.maxFinite,
           child: ListView(
             shrinkWrap: true,
@@ -166,11 +166,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   // Nouvelle méthode pour ajouter un produit au panier
-  void _addToCart(ProductModel product) {
+  // Remplace la version existante
+  Future<void> _addToCart(ProductModel product) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
+      if (!mounted) return; // sécurité avant d'utiliser context
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Vous devez être connecté pour ajouter au panier'),
           backgroundColor: Colors.red,
         ),
@@ -178,38 +180,38 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
-    _cartController.addOrIncrementProduct(product.id).then((_) {
+    try {
+      await _cartController.addOrIncrementProduct(product.id);
+
+      if (!mounted) return; // <-- important après await
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
             children: [
-              Icon(Icons.check_circle, color: Colors.white),
-              SizedBox(width: 8),
-              Expanded(
-                child: Text('${product.title} ajouté au panier'),
-              ),
+              const Icon(Icons.check_circle, color: Colors.white),
+              const SizedBox(width: 8),
+              Expanded(child: Text('${product.title} ajouté au panier')),
               TextButton(
                 onPressed: _navigateToCart,
-                child: Text(
-                  'VOIR PANIER',
-                  style: TextStyle(color: Colors.white),
-                ),
+                child: const Text('VOIR PANIER', style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
           backgroundColor: Colors.green,
-          duration: Duration(seconds: 3),
+          duration: const Duration(seconds: 3),
         ),
       );
-    }).catchError((error) {
+    } catch (error) {
+      if (!mounted) return; // <-- important après await échoué
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Erreur: $error'),
           backgroundColor: Colors.red,
         ),
       );
-    });
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -290,7 +292,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      color: Colors.blue.withOpacity(0.1),
+      color: Colors.blue.withValues(alpha:0.1),
       child: Row(
         children: [
           Icon(Icons.search, color: Colors.blue, size: 16),
@@ -418,7 +420,7 @@ class _MyHomePageState extends State<MyHomePage> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: Colors.grey.withValues(alpha:0.2),
             spreadRadius: 1,
             blurRadius: 4,
             offset: Offset(0, -2),

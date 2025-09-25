@@ -1,5 +1,4 @@
 
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce/model/cart_model.dart';
 import 'package:flutter_ecommerce/repository/cart_repository.dart';
@@ -324,15 +323,6 @@ class CartController extends ChangeNotifier {
 
   void _clearError() {
     _error = null;
-  }
-
-  // Validation des données
-  bool _validateCartOperation() {
-    if (_currentCart?.id == null) {
-      _setError('Aucun panier actif');
-      return false;
-    }
-    return true;
   }
 
   // Méthodes pour les statistiques du panier

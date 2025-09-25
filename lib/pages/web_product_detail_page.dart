@@ -52,6 +52,7 @@ class _WebProductDetailPageState extends State<WebProductDetailPage> {
   Future<void> _addToCart(ProductModel product) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Vous devez être connecté pour ajouter au panier'),
@@ -63,6 +64,8 @@ class _WebProductDetailPageState extends State<WebProductDetailPage> {
 
     try {
       await _cartController.addOrIncrementProduct(product.id, quantity: quantity);
+
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.green,
@@ -81,11 +84,13 @@ class _WebProductDetailPageState extends State<WebProductDetailPage> {
         ),
       );
     } catch (e) {
+      if (!mounted) return; //
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erreur: $e'), backgroundColor: Colors.red),
       );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -168,7 +173,7 @@ class _WebProductDetailPageState extends State<WebProductDetailPage> {
                               margin: const EdgeInsets.symmetric(horizontal: 4),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: active ? Colors.blue : Colors.white.withOpacity(0.6),
+                                color: active ? Colors.blue : Colors.white.withValues(alpha:0.6),
                               ),
                             );
                           }).toList(),
@@ -186,7 +191,7 @@ class _WebProductDetailPageState extends State<WebProductDetailPage> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: Colors.blue.withOpacity(0.1),
+                          color: Colors.blue.withValues(alpha:0.1),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
@@ -314,7 +319,7 @@ class _WebProductDetailPageState extends State<WebProductDetailPage> {
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.25),
+              color: Colors.grey.withValues(alpha:0.25),
               spreadRadius: 1,
               blurRadius: 6,
               offset: const Offset(0, -2),

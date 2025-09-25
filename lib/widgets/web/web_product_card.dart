@@ -33,7 +33,7 @@ class _WebProductCardState extends State<WebProductCard> {
         curve: Curves.easeOut,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          boxShadow: _hover ? [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 12, offset: const Offset(0, 6))] : [],
+          boxShadow: _hover ? [BoxShadow(color: Colors.black.withValues(alpha:0.08), blurRadius: 12, offset: const Offset(0, 6))] : [],
         ),
         child: Card(
           elevation: 0,

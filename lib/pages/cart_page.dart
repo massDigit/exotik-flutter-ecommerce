@@ -11,10 +11,10 @@ class CartPage extends StatefulWidget {
   const CartPage({super.key, required this.cartController});
 
   @override
-  _CartPageState createState() => _CartPageState();
+  CartPageState createState() => CartPageState();
 }
 
-class _CartPageState extends State<CartPage> {
+class CartPageState extends State<CartPage> {
   @override
   void initState() {
     super.initState();
@@ -188,7 +188,7 @@ class _CartPageState extends State<CartPage> {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.blue.withOpacity(0.1),
+        color: Colors.blue.withValues(alpha:0.1),
         border: Border(
           bottom: BorderSide(color: Colors.grey[300]!),
         ),
@@ -359,7 +359,7 @@ class _CartPageState extends State<CartPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${product.title}',
+                    product.title,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
@@ -451,7 +451,7 @@ class _CartPageState extends State<CartPage> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: Colors.grey.withValues(alpha:0.2),
             spreadRadius: 1,
             blurRadius: 4,
             offset: Offset(0, -2),

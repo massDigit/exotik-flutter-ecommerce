@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:flutter_ecommerce/model/product_model.dart';
+import 'package:flutter/foundation.dart';
 
 
 class ProductService {
   static const String baseUrl = 'https://api-ecom-flutter.jboureux.fr';
 
   void test() {
-    print("ProductService");
+    debugPrint("ProductService");
   }
 
   // Récupérer tous les produits avec pagination

@@ -135,7 +135,7 @@ class _WebSearchBarState extends State<WebSearchBar> {
                                 onTap: () => _selectSuggestion(s),
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                                  color: highlighted ? Colors.blue.withOpacity(0.06) : null,
+                                  color: highlighted ? Colors.blue.withValues(alpha:0.06) : null,
                                   child: Row(
                                     children: [
                                       const Icon(Icons.search, size: 18, color: Colors.black54),

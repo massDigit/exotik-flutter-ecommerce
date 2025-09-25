@@ -15,7 +15,7 @@ class WebActiveFilterBar extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      color: Colors.blue.withOpacity(0.08),
+      color: Colors.blue.withValues(alpha:0.08),
       child: Row(
         children: [
           const Icon(Icons.search, color: Colors.blue, size: 16),

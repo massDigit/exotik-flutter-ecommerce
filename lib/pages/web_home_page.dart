@@ -125,15 +125,23 @@ class _WebHomePageState extends State<WebHomePage> {
     );
   }
 
-  void _addToCart(ProductModel product) {
+  void _addToCart(ProductModel product) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
+      if (!mounted) return; // sécurité avant d'utiliser context
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vous devez être connecté pour ajouter au panier'), backgroundColor: Colors.red),
+        const SnackBar(
+          content: Text('Vous devez être connecté pour ajouter au panier'),
+          backgroundColor: Colors.red,
+        ),
       );
       return;
     }
-    _cartController.addOrIncrementProduct(product.id).then((_) {
+
+    try {
+      await _cartController.addOrIncrementProduct(product.id);
+
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.green,
@@ -143,17 +151,25 @@ class _WebHomePageState extends State<WebHomePage> {
               const Icon(Icons.check_circle, color: Colors.white),
               const SizedBox(width: 8),
               Expanded(child: Text('${product.title} ajouté au panier')),
-              TextButton(onPressed: _navigateToCart, child: const Text('VOIR PANIER', style: TextStyle(color: Colors.white))),
+              TextButton(
+                onPressed: _navigateToCart,
+                child: const Text('VOIR PANIER', style: TextStyle(color: Colors.white)),
+              ),
             ],
           ),
         ),
       );
-    }).catchError((e) {
+    } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erreur: $e'), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text('Erreur: $e'),
+          backgroundColor: Colors.red,
+        ),
       );
-    });
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -235,7 +251,7 @@ class _WebHomePageState extends State<WebHomePage> {
                 constraints: const BoxConstraints(maxWidth: 260),
                 child: Material(
                   elevation: 1,
-                  color: Colors.blue.withOpacity(0.04),
+                  color: Colors.blue.withValues(alpha:0.04),
                   child: Column(
                     children: [
                       Container(
@@ -296,7 +312,7 @@ class _WebHomePageState extends State<WebHomePage> {
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.12), blurRadius: 6, offset: const Offset(0, -2))],
+                        boxShadow: [BoxShadow(color: Colors.grey.withValues(alpha:0.12), blurRadius: 6, offset: const Offset(0, -2))],
                       ),
                       child: WebPaginationToolbar(controller: _paginationController),
                     ),

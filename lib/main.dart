@@ -69,20 +69,3 @@ class AppRoot extends StatelessWidget {
   }
 }
 
-class _RouteErrorPage extends StatelessWidget {
-  final String message;
-  const _RouteErrorPage({required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Navigation')),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Text(message, textAlign: TextAlign.center),
-        ),
-      ),
-    );
-  }
-}

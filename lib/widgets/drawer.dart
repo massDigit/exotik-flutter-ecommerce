@@ -11,16 +11,23 @@ class AppDrawer extends StatelessWidget {
     Navigator.pushReplacementNamed(context, route);
   }
 
-  // 🔥 AJOUT : Fonction pour déconnecter l'utilisateur
   Future<void> _signOut(BuildContext context) async {
-    // Déconnecte l'utilisateur de Firebase
-    await FirebaseAuth.instance.signOut();
-    // Ferme le drawer
-    Navigator.pop(context);
-    // Affiche un message de confirmation
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Déconnecté avec succès')),
-    );
+    // Capture les états AVANT l'await
+    final nav = Navigator.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+
+    nav.pop();
+
+    try {
+      await FirebaseAuth.instance.signOut();
+      messenger.showSnackBar(
+        const SnackBar(content: Text('Déconnecté avec succès')),
+      );
+    } catch (e) {
+      messenger.showSnackBar(
+        SnackBar(content: Text('Erreur lors de la déconnexion: $e')),
+      );
+    }
   }
 
   @override

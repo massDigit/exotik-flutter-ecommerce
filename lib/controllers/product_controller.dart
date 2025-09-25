@@ -1,6 +1,7 @@
 import 'package:flutter_ecommerce/repository/product_repository.dart';
 import 'package:flutter_ecommerce/services/product_service.dart';
 import 'package:flutter_ecommerce/model/product_model.dart';
+import 'package:flutter/foundation.dart';
 
 class ProductController {
   final ProductRepository _repository = ProductRepository(ProductService());
@@ -36,13 +37,11 @@ class ProductController {
       _isLoading = false;
 
       _notifyStateChanged();
-      print(' ${_allProducts.length} produits chargés au total');
 
     } catch (e) {
       _errorMessage = e.toString();
       _isLoading = false;
       _notifyStateChanged();
-      print(' Erreur: $e');
     }
   }
 
@@ -52,7 +51,7 @@ class ProductController {
       _categories = loadedCategories;
       _notifyStateChanged();
     } catch (e) {
-      print('Erreur lors du chargement des catégories: $e');
+      debugPrint('Erreur lors du chargement des catégories: $e');
     }
   }
 
@@ -94,7 +93,7 @@ class ProductController {
     try {
       return await _repository.getProductById(id);
     } catch (e) {
-      print('Erreur lors de la récupération du produit $id: $e');
+      debugPrint('Erreur lors de la récupération du produit $id: $e');
       return null;
     }
   }
