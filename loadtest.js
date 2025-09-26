@@ -7,7 +7,7 @@ export let options = {
 };
 
 export default function () {
-  const res = http.get('https://mds-m2-flutter-exotik-ecom.web.app/');
+  const res = http.get('https://green--mds-m2-flutter-exotik-ecom.web.app/');
   check(res, {
     'status is 200': (r) => r.status === 200,
     'body size > 1000': (r) => r.body.length > 1000,
