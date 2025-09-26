@@ -1,5 +1,3 @@
-# .github/workflows/blue-green-deploy.yml
-
 name: Blue-Green CI/CD
 
 on:
@@ -86,7 +84,7 @@ jobs:
       - name: Run k6 load test on green channel
         env:
           GREEN_URL: https://green--mds-m2-flutter-exotik-ecom.web.app
-        run: k6 run loadtest.js --address $GREEN_URL
+        run: k6 run loadtest.js
 
   promote-green-to-live:
     needs: load-test-green

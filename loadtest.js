@@ -1,3 +1,4 @@
+
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
@@ -6,8 +7,10 @@ export let options = {
   duration: '30s',
 };
 
+const BASE_URL = __ENV.GREEN_URL || 'https://green--mds-m2-flutter-exotik-ecom.web.app/';
+
 export default function () {
-  const res = http.get('https://green--mds-m2-flutter-exotik-ecom.web.app/');
+  const res = http.get(BASE_URL);
   check(res, {
     'status is 200': (r) => r.status === 200,
     'body size > 1000': (r) => r.body.length > 1000,
